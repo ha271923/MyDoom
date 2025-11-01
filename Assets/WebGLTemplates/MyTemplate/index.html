@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en-us">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <title>Unity WebGL Player | DarkDoom</title>
+    <style>
+      /* ========= 核心：滿版 + 完全禁用滾動 ========= */
+      html, body {
+        width: 100%;
+        height: 100%;
+        padding: 0;
+        border: 0;
+        margin: 0;
+        background-color: transparent;
+        overflow: hidden;                    /* 禁止滾動 */
+      }
+
+      /* 隱藏所有瀏覽器的滾動條 */
+      html { 
+        -ms-overflow-style: none;          /* IE / Edge */
+        scrollbar-width: none;             /* Firefox */
+      }
+      body::-webkit-scrollbar { 
+        display: none;                     /* Chrome / Safari */
+      }
+
+      /* ========= Canvas 滿版顯示 ========= */
+      #unity-canvas {
+        width: 100vw !important;
+        height: 100vh !important;
+        position: fixed !important;
+        top: 0;
+        left: 0;
+        background: transparent;
+        outline: none;
+      }
+
+      /* ========= 中央顯示 VIVERSE 樣式 ========= */
+      #viverse-logo {
+        position: absolute;
+        top: 45%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        font-family: Arial, Helvetica, sans-serif;
+        font-size: 72px;
+        font-weight: bold;
+        color: #33ccff;
+        text-shadow: 0 0 15px #66e0ff;
+        z-index: 9999;
+        pointer-events: none;
+        opacity: 1;
+        transition: opacity 1.5s ease-out;
+      }
+
+      #viverse-logo.hidden {
+        opacity: 0;
+      }
+
+      /* ========= Progress Bar 樣式 ========= */
+      #progress-container {
+        position: absolute;
+        top: 55%;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 40%;
+        height: 16px;
+        background-color: rgba(255,255,255,0.15);
+        border-radius: 8px;
+        overflow: hidden;
+        z-index: 9999;
+      }
+
+      #progress-bar {
+        width: 0%;
+        height: 100%;
+        background: linear-gradient(90deg, #00ccff, #66e0ff);
+        transition: width 0.3s ease;
+      }
+
+      #progress-text {
+        position: absolute;
+        top: 60%;
+        left: 50%;
+        transform: translateX(-50%);
+        font-size: 18px;
+        color: #66e0ff;
+        font-family: Arial, Helvetica, sans-serif;
+        white-space: nowrap;
+        z-index: 9999;
+      }
+    </style>
+  </head>
+
+  <body style="overflow: hidden;">
+    <!-- 中央顯示的 VIVERSE 字樣 -->
+    <div id="viverse-logo">VIVERSE</div>
+
+    <!-- Progress Bar -->
+    <div id="progress-container">
+      <div id="progress-bar"></div>
+    </div>
+    <div id="progress-text">Loading 0%</div>
+
+    <canvas id="unity-canvas" width="960" height="540" tabindex="-1"></canvas>
+
+    <script src="Build/WebGL Builds.loader.js"></script>
+    <script>
+      const canvas = document.querySelector("#unity-canvas");
+      const logo = document.getElementById("viverse-logo");
+      const progressBar = document.getElementById("progress-bar");
+      const progressText = document.getElementById("progress-text");
+
+      // 行動裝置支援
+      if (/iPhone|iPad|iPod|Android/i.test(navigator.userAgent)) {
+        const meta = document.createElement('meta');
+        meta.name = 'viewport';
+        meta.content = 'width=device-width, height=device-height, initial-scale=1.0, user-scalable=no, shrink-to-fit=yes';
+        document.head.appendChild(meta);
+        canvas.style.position = "fixed";
+      }
+
+      createUnityInstance(canvas, {
+        dataUrl: "Build/WebGL Builds.data",
+        frameworkUrl: "Build/WebGL Builds.framework.js",
+        codeUrl: "Build/WebGL Builds.wasm",
+        streamingAssetsUrl: "StreamingAssets",
+        companyName: "HTC",
+        productName: "DarkDoom",
+        productVersion: "4.0.6",
+      }, (progress) => {
+        const percent = Math.round(progress * 100);
+        progressBar.style.width = percent + "%";
+        progressText.textContent = `Loading ${percent}%`;
+      }).then(() => {
+        // Unity 載入完成 → 淡出 logo 與進度條
+        fadeOutLogo();
+      });
+
+      function fadeOutLogo() {
+        logo.classList.add("hidden");
+        document.getElementById("progress-container").style.opacity = "0";
+        progressText.style.opacity = "0";
+        setTimeout(() => {
+          logo.style.display = "none";
+          document.getElementById("progress-container").style.display = "none";
+          progressText.style.display = "none";
+        }, 2000);
+      }
+
+      // 【可選】極端防滾動（某些瀏覽器仍可滾動時使用）
+      // window.addEventListener('wheel', e => e.preventDefault(), { passive: false });
+      // window.addEventListener('touchmove', e => e.preventDefault(), { passive: false });
+    </script>
+  </body>
+</html>
