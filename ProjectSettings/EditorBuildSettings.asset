@@ -20,7 +20,7 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/My/SatelliteScene.unity
     guid: 21614006e9eed9149b83e59561b02ef1
-  - enabled: 0
+  - enabled: 1
     path: Assets/My/TestScene.unity
     guid: 1a546389dcb24314295deff86dc27103
   - enabled: 1
