@@ -11230,7 +11230,7 @@ PrefabInstance:
     - target: {fileID: 6370966072896210225, guid: 25a1b0efadb966e44889fce712c8ff8d,
         type: 3}
       propertyPath: MaxHealth
-      value: 300
+      value: 100
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -11578,12 +11578,12 @@ PrefabInstance:
     - target: {fileID: 1215391223574712699, guid: 90639c64c0611c2488bd41444bcc8dd9,
         type: 3}
       propertyPath: m_LocalPosition.x
-      value: -62
+      value: -55.64
       objectReference: {fileID: 0}
     - target: {fileID: 1215391223574712699, guid: 90639c64c0611c2488bd41444bcc8dd9,
         type: 3}
       propertyPath: m_LocalPosition.z
-      value: -14.3
+      value: -21.93
       objectReference: {fileID: 0}
     - target: {fileID: 1534010612533971512, guid: 90639c64c0611c2488bd41444bcc8dd9,
         type: 3}
@@ -11664,6 +11664,16 @@ PrefabInstance:
         type: 3}
       propertyPath: m_AnchoredPosition.y
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2622839769684440906, guid: 90639c64c0611c2488bd41444bcc8dd9,
+        type: 3}
+      propertyPath: m_LocalScale.z
+      value: 4
+      objectReference: {fileID: 0}
+    - target: {fileID: 2622839769684440906, guid: 90639c64c0611c2488bd41444bcc8dd9,
+        type: 3}
+      propertyPath: m_LocalPosition.z
+      value: -10.41
       objectReference: {fileID: 0}
     - target: {fileID: 2872533206596056126, guid: 90639c64c0611c2488bd41444bcc8dd9,
         type: 3}
@@ -12841,7 +12851,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1018700428}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
   m_Name: 
@@ -24362,12 +24372,8 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: '[ How to FLY? ]
-
-    1. Jumping on midair.
-
-    2. Press Jump again and
-    hold it.'
+  m_text: " [ How to FLY? ]\n 0. Get Jetpack equipment first.\n 1. Jumping on midair.\n
+    2. Press Jump again and hold it."
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
@@ -24376,8 +24382,8 @@ MonoBehaviour:
   m_fontMaterials: []
   m_fontColor32:
     serializedVersion: 2
-    rgba: 4294967295
-  m_fontColor: {r: 1, g: 1, b: 1, a: 1}
+    rgba: 4278207628
+  m_fontColor: {r: 0.5471698, g: 0.266201, b: 0, a: 1}
   m_enableVertexGradient: 0
   m_colorMode: 3
   m_fontColorGradient:
@@ -30724,7 +30730,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_Color: {r: 0.49803925, g: 0.43529415, b: 0.4431373, a: 1}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
