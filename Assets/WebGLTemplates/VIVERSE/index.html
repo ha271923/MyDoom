@@ -3,12 +3,13 @@
   <head>
     <meta charset="utf-8">
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-    <title>Unity WebGL Player | {{{ PRODUCT_NAME }}}</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>VIVERSE</title>
     <link rel="shortcut icon" href="TemplateData/favicon.ico">
-    <link rel="manifest" href="manifest.webmanifest">
+    <link rel="manifest" href="manifest.json">
     <style>
-      /* ========= 完全移除 body/html 的 margin 和 padding ========= */
-      * {
+      /* ========= 強制移除邊距 ========= */
+      *, *::before, *::after {
         margin: 0;
         padding: 0;
         box-sizing: border-box;
@@ -19,199 +20,136 @@
         height: 100%;
         overflow: hidden;
         background: #000;
-        position: fixed;
-        top: 0;
-        left: 0;
+        touch-action: none;
+        -ms-touch-action: none;
       }
 
-      /* 隱藏滾動條 */
-      html {
-        -ms-overflow-style: none;
-        scrollbar-width: none;
-      }
-      body::-webkit-scrollbar {
-        display: none;
-      }
-
-      /* ========= Container 填滿整個視窗 ========= */
+      /* ========= 容器與 Canvas 填滿 ========= */
       #viverse-container {
         position: fixed;
-        top: 0;
-        left: 0;
-        width: 100vw;
-        height: 100vh;
+        top: 0; left: 0;
+        width: 100vw; height: 100vh;
         background: #000;
       }
 
-      /* ========= Canvas 填滿整個視窗 ========= */
       #viverse-canvas {
         position: fixed !important;
-        top: 0 !important;
-        left: 0 !important;
-        width: 100vw !important;
-        height: 100vh !important;
-        display: block;
-        outline: none;
-        cursor: default;
+        top: 0 !important; left: 0 !important;
+        width: 100vw !important; height: 100vh !important;
+        display: block !important;
+        outline: none !important;
+        image-rendering: crisp-edges;
       }
 
-      /* ========= Loading Bar 置中顯示 ========= */
+      /* ========= Loading Bar 響應式置中 ========= */
       #viverse-loading-bar {
         position: fixed;
-        top: 50%;
-        left: 50%;
+        top: 50%; left: 50%;
         transform: translate(-50%, -50%);
         display: flex;
         flex-direction: column;
         align-items: center;
-        gap: 30px;
+        gap: 16px;
+        max-width: 90vw;
+        max-height: 80vh;
+        padding: 20px;
+        background: rgba(0,0,0,0.9);
+        border-radius: 16px;
+        box-shadow: 0 0 30px rgba(0,209,255,0.5);
         z-index: 9999;
+        pointer-events: none;
       }
 
       #viverse-logo {
-        width: 200px;
-        height: 200px;
-        background: url('TemplateData/viverse-logo.png') no-repeat center;
-        background-size: contain;
+        width: 120px;
+        height: auto;
+        max-width: 40vw;
+        object-fit: contain;
+        filter: drop-shadow(0 0 15px rgba(0, 209, 255, 0.8));
+        animation: pulse 2s infinite;
       }
 
-      /* ========= Progress Bar 樣式 ========= */
-      #viverse-progress-bar-empty {
-        width: 400px;
-        height: 24px;
-        background: rgba(255, 255, 255, 0.1);
-        border-radius: 12px;
+      @keyframes pulse {
+        0%, 100% { transform: scale(1); }
+        50% { transform: scale(1.05); }
+      }
+
+      #game-title {
+        font-family: Arial, sans-serif;
+        font-weight: bold;
+        color: #00D1FF;
+        text-shadow: 0 0 10px #00D1FF;
+        font-size: clamp(24px, 8vw, 42px);
+        white-space: nowrap;
+      }
+
+      #unity-progress-bar-empty {
+        width: 280px;
+        max-width: 80vw;
+        height: 14px;
+        background: #222;
+        border: 1px solid #00D1FF;
+        border-radius: 7px;
         overflow: hidden;
-        border: 2px solid rgba(74, 222, 255, 0.3);
       }
 
-      #viverse-progress-bar-full {
+      #unity-progress-bar-full {
         width: 0%;
         height: 100%;
-        background: linear-gradient(90deg, #00ccff, #66e0ff);
-        transition: width 0.3s ease;
-        box-shadow: 0 0 15px rgba(102, 224, 255, 0.6);
-      }
-
-      /* ========= Warning Banner ========= */
-      #viverse-warning {
-        position: fixed;
-        top: 20px;
-        left: 50%;
-        transform: translateX(-50%);
-        max-width: 80%;
-        z-index: 10000;
-        display: none;
-      }
-
-      #viverse-warning > div {
-        margin: 10px;
-        padding: 15px;
-        border-radius: 8px;
-        font-family: Arial, sans-serif;
-        font-size: 14px;
-      }
-
-      /* ========= 移除任何可能的邊距 ========= */
-      canvas {
-        image-rendering: optimizeSpeed;
-        image-rendering: -moz-crisp-edges;
-        image-rendering: -o-crisp-edges;
-        image-rendering: -webkit-optimize-contrast;
-        image-rendering: optimize-contrast;
-        image-rendering: crisp-edges;
-        image-rendering: pixelated;
-        -ms-interpolation-mode: nearest-neighbor;
+        background: #00D1FF;
+        border-radius: 6px;
+        box-shadow: 0 0 10px #00D1FF;
+        transition: width 0.1s ease;
       }
     </style>
   </head>
   <body>
     <div id="viverse-container">
-      <canvas id="viverse-canvas" tabindex="-1"></canvas>
+      <canvas id="viverse-canvas"></canvas>
       <div id="viverse-loading-bar">
-        <img id="viverse-logo">
-        <div id="viverse-progress-bar-empty">
-          <div id="viverse-progress-bar-full"></div>
+        <img id="viverse-logo" src="TemplateData/viverse-logo.png" alt="VIVERSE">
+        <div id="game-title">VIVERSE</div>
+        <div id="unity-progress-bar-empty">
+          <div id="unity-progress-bar-full"></div>
         </div>
       </div>
-      <div id="viverse-warning"></div>
     </div>
 
     <script>
-      // Service Worker 註冊
-      window.addEventListener("load", function () {
-        if ("serviceWorker" in navigator) {
-          navigator.serviceWorker.register("ServiceWorker.js");
-        }
-      });
-
-      var container = document.querySelector("#viverse-container");
-      var canvas = document.querySelector("#viverse-canvas");
-      var loadingBar = document.querySelector("#viverse-loading-bar");
-      var progressBarFull = document.querySelector("#viverse-progress-bar-full");
-      var warningBanner = document.querySelector("#viverse-warning");
-
-      // 顯示警告或錯誤訊息
-      function unityShowBanner(msg, type) {
-        function updateBannerVisibility() {
-          warningBanner.style.display = warningBanner.children.length ? 'block' : 'none';
-        }
-        var div = document.createElement('div');
-        div.innerHTML = msg;
-        warningBanner.appendChild(div);
-        if (type == 'error') div.style = 'background: red; padding: 10px;';
-        else {
-          if (type == 'warning') div.style = 'background: yellow; padding: 10px;';
-          setTimeout(function() {
-            warningBanner.removeChild(div);
-            updateBannerVisibility();
-          }, 5000);
-        }
-        updateBannerVisibility();
-      }
-
       var buildUrl = "Build";
       var loaderUrl = buildUrl + "/{{{ LOADER_FILENAME }}}";
       var config = {
         dataUrl: buildUrl + "/{{{ DATA_FILENAME }}}",
         frameworkUrl: buildUrl + "/{{{ FRAMEWORK_FILENAME }}}",
-#if USE_THREADS
-        workerUrl: buildUrl + "/{{{ WORKER_FILENAME }}}",
-#endif
-#if USE_WASM
         codeUrl: buildUrl + "/{{{ CODE_FILENAME }}}",
-#endif
-#if MEMORY_FILENAME
-        memoryUrl: buildUrl + "/{{{ MEMORY_FILENAME }}}",
-#endif
-#if SYMBOLS_FILENAME
-        symbolsUrl: buildUrl + "/{{{ SYMBOLS_FILENAME }}}",
-#endif
         streamingAssetsUrl: "StreamingAssets",
-        companyName: {{{ JSON.stringify(COMPANY_NAME) }}},
-        productName: {{{ JSON.stringify(PRODUCT_NAME) }}},
-        productVersion: {{{ JSON.stringify(PRODUCT_VERSION) }}},
-        showBanner: unityShowBanner,
-        // ========= 重要：讓 Unity 自動調整 Canvas 大小以匹配視窗 =========
-        matchWebGLToCanvasSize: true,
+        companyName: "VIVERSE",
+        productName: "VIVERSE",
+        productVersion: "1.0",
       };
 
-      // 行動裝置設定
-      if (/iPhone|iPad|iPod|Android/i.test(navigator.userAgent)) {
-        var meta = document.createElement('meta');
-        meta.name = 'viewport';
-        meta.content = 'width=device-width, height=device-height, initial-scale=1.0, user-scalable=no, shrink-to-fit=yes';
-        document.getElementsByTagName('head')[0].appendChild(meta);
-        
-        // 強制全螢幕
-        container.style.width = "100vw";
-        container.style.height = "100vh";
+      var container = document.querySelector("#viverse-container");
+      var canvas = document.querySelector("#viverse-canvas");
+      var loadingBar = document.querySelector("#viverse-loading-bar");
+      var progressBarFull = document.querySelector("#unity-progress-bar-full");
+
+      // 強制顯示 loading bar
+      loadingBar.style.display = "flex";
+
+      // 關鍵：動態調整 Canvas 尺寸
+      function resizeCanvas() {
+        const width = window.innerWidth;
+        const height = window.innerHeight;
+        canvas.width = width;
+        canvas.height = height;
+        canvas.style.width = width + 'px';
+        canvas.style.height = height + 'px';
       }
 
-      // 移除背景圖片設定（全螢幕時不需要）
-      // canvas.style.background = "";
-      
-      loadingBar.style.display = "flex";
+      // 初始 + 變動時調整
+      resizeCanvas();
+      window.addEventListener('resize', resizeCanvas);
+      window.addEventListener('orientationchange', resizeCanvas);
 
       var script = document.createElement("script");
       script.src = loaderUrl;
@@ -220,41 +158,16 @@
           progressBarFull.style.width = 100 * progress + "%";
         }).then((unityInstance) => {
           loadingBar.style.display = "none";
-          
-          // ========= 確保載入後 Canvas 仍然是全螢幕 =========
-          setTimeout(() => {
-            canvas.width = window.innerWidth;
-            canvas.height = window.innerHeight;
-          }, 100);
-          
+          resizeCanvas(); // 再次確保
         }).catch((message) => {
-          unityShowBanner(message, 'error');
-          console.error(message);
+          alert("載入失敗: " + message);
         });
       };
-      
-      script.onerror = () => {
-        unityShowBanner('Failed to load Unity loader script', 'error');
-      };
-      
       document.body.appendChild(script);
 
-      // ========= 視窗大小改變時調整 Canvas =========
-      window.addEventListener('resize', function() {
-        canvas.width = window.innerWidth;
-        canvas.height = window.innerHeight;
-      });
-
-      // ========= 防止滾動和縮放（可選）=========
-      document.addEventListener('touchmove', function(e) {
-        if (e.scale !== 1) {
-          e.preventDefault();
-        }
-      }, { passive: false });
-
-      document.addEventListener('gesturestart', function(e) {
-        e.preventDefault();
-      });
+      // 防止縮放與滾動
+      document.addEventListener('touchmove', e => e.preventDefault(), { passive: false });
+      document.addEventListener('gesturestart', e => e.preventDefault());
     </script>
   </body>
 </html>
