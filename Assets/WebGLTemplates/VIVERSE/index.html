@@ -3,10 +3,25 @@
   <head>
     <meta charset="utf-8">
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    
+    <!-- 關鍵 1：行動裝置必備 viewport -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    
+    <!-- 關鍵 2：iOS 支援獨立 App 模式 + 狀態列顏色 -->
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="format-detection" content="telephone=no">
+    
+    <!-- 關鍵 3：PWA 主題色 -->
+    <meta name="theme-color" content="#00D1FF">
+    
     <title>VIVERSE</title>
     <link rel="shortcut icon" href="TemplateData/favicon.ico">
     <link rel="manifest" href="manifest.json">
+    
+    <!-- 關鍵 4：iOS 主畫面圖示 -->
+    <link rel="apple-touch-icon" href="TemplateData/viverse-logo.png">
+    
     <style>
       /* ========= 強制移除邊距 ========= */
       *, *::before, *::after {
@@ -22,14 +37,16 @@
         background: #000;
         touch-action: none;
         -ms-touch-action: none;
+        -webkit-text-size-adjust: none; /* 防止 iOS 自動調整字體 */
       }
 
-      /* ========= 容器與 Canvas 填滿 ========= */
+      /* 關鍵 5：iOS 安全區適配（瀏海、手勢列） */
       #viverse-container {
         position: fixed;
         top: 0; left: 0;
         width: 100vw; height: 100vh;
         background: #000;
+        padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
       }
 
       #viverse-canvas {
@@ -39,9 +56,10 @@
         display: block !important;
         outline: none !important;
         image-rendering: crisp-edges;
+        touch-action: none;
       }
 
-      /* ========= Loading Bar 響應式置中 ========= */
+      /* Loading Bar 響應式 */
       #viverse-loading-bar {
         position: fixed;
         top: 50%; left: 50%;
@@ -62,16 +80,16 @@
 
       #viverse-logo {
         width: 120px;
-        height: auto;
         max-width: 40vw;
+        height: auto;
         object-fit: contain;
-        filter: drop-shadow(0 0 15px rgba(0, 209, 255, 0.8));
-        animation: pulse 2s infinite;
+        filter: drop-shadow(0 0 15px rgba(0, 209, 255, 0.6));
+        animation: pulse 2s ease-in-out infinite;
       }
 
       @keyframes pulse {
         0%, 100% { transform: scale(1); }
-        50% { transform: scale(1.05); }
+        50% { transform: scale(1.07); }
       }
 
       #game-title {
@@ -133,10 +151,8 @@
       var loadingBar = document.querySelector("#viverse-loading-bar");
       var progressBarFull = document.querySelector("#unity-progress-bar-full");
 
-      // 強制顯示 loading bar
       loadingBar.style.display = "flex";
 
-      // 關鍵：動態調整 Canvas 尺寸
       function resizeCanvas() {
         const width = window.innerWidth;
         const height = window.innerHeight;
@@ -146,10 +162,14 @@
         canvas.style.height = height + 'px';
       }
 
-      // 初始 + 變動時調整
       resizeCanvas();
       window.addEventListener('resize', resizeCanvas);
       window.addEventListener('orientationchange', resizeCanvas);
+
+      // 關鍵 6：iOS 延遲點擊修復
+      canvas.addEventListener('touchstart', function(e) {
+        e.preventDefault();
+      }, { passive: false });
 
       var script = document.createElement("script");
       script.src = loaderUrl;
@@ -158,7 +178,7 @@
           progressBarFull.style.width = 100 * progress + "%";
         }).then((unityInstance) => {
           loadingBar.style.display = "none";
-          resizeCanvas(); // 再次確保
+          resizeCanvas();
         }).catch((message) => {
           alert("載入失敗: " + message);
         });
