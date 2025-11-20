@@ -248,7 +248,7 @@ MonoBehaviour:
   EndGameFadeCanvasGroup: {fileID: 6089522275397732777}
   WinSceneName: WinScene
   DelayBeforeFadeToBlack: 4
-  WinGameMessage: All objectives completed
+  WinGameMessage: Mission completed!
   DelayBeforeWinMessage: 2
   VictorySound: {fileID: 8300000, guid: a533219934975884e81c1add37af9930, type: 3}
   LoseSceneName: LoseScene
